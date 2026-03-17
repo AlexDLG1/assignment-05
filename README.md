@@ -147,7 +147,7 @@ apps/backend/prisma/migrations/
 ---
 
 ## Evidencia de base de datos
-docs/basededatoss.png)
+(docs/basededatoss.png)
 
 
 ---
