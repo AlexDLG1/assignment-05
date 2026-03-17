@@ -11,12 +11,28 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+
+// Logger temporal para ver qué rutas están entrando
+app.use((req, res, next) => {
+  console.log(`[REQ] ${req.method} ${req.url}`);
+  next();
+});
+
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Ruta raíz
 app.get("/", (req, res) => {
   res.json({
-    mensaje: "API de UniTask funcionando correctamente"
+    ok: true,
+    mensaje: "Backend UniTask activo"
+  });
+});
+
+// Ruta de prueba simple
+app.get("/api/ping", (req, res) => {
+  res.json({
+    ok: true,
+    mensaje: "pong"
   });
 });
 
@@ -217,6 +233,14 @@ app.delete("/api/tasks/:id", async (req, res) => {
       error: "No se pudo eliminar la tarea"
     });
   }
+});
+
+// 404 controlado
+app.use((req, res) => {
+  res.status(404).json({
+    error: "Ruta no encontrada",
+    ruta: req.originalUrl
+  });
 });
 
 async function startServer() {
