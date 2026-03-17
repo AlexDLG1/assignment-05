@@ -11,7 +11,15 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+console.log(">>> SERVER.JS CORRECTO 053bd66 CARGADO");
 
+app.get("/alex-check-053bd66", (req, res) => {
+  res.json({
+    ok: true,
+    archivo: "server.js",
+    commit: "053bd66"
+  });
+});
 // Logger temporal
 app.use((req, res, next) => {
   console.log(`[REQ] ${req.method} ${req.url}`);
