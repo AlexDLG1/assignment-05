@@ -12,12 +12,14 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Logger temporal para ver qué rutas están entrando
+// Logger temporal
 app.use((req, res, next) => {
   console.log(`[REQ] ${req.method} ${req.url}`);
   next();
 });
 
+// Swagger en /docs y también en /api-docs
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Ruta raíz
@@ -28,16 +30,19 @@ app.get("/", (req, res) => {
   });
 });
 
-// Ruta de prueba simple
-app.get("/api/ping", (req, res) => {
+// Ping
+const pingHandler = async (req, res) => {
   res.json({
     ok: true,
     mensaje: "pong"
   });
-});
+};
+
+app.get("/ping", pingHandler);
+app.get("/api/ping", pingHandler);
 
 // Health check
-app.get("/api/health", async (req, res) => {
+const healthHandler = async (req, res) => {
   try {
     await prisma.$queryRaw`SELECT 1`;
     res.json({
@@ -52,10 +57,13 @@ app.get("/api/health", async (req, res) => {
       error: "No se pudo conectar a la base de datos"
     });
   }
-});
+};
+
+app.get("/health", healthHandler);
+app.get("/api/health", healthHandler);
 
 // Obtener todas las tareas
-app.get("/api/tasks", async (req, res) => {
+const getTasksHandler = async (req, res) => {
   try {
     const tasks = await prisma.task.findMany({
       orderBy: {
@@ -70,10 +78,13 @@ app.get("/api/tasks", async (req, res) => {
       error: "No se pudieron obtener las tareas"
     });
   }
-});
+};
+
+app.get("/tasks", getTasksHandler);
+app.get("/api/tasks", getTasksHandler);
 
 // Obtener una tarea por id
-app.get("/api/tasks/:id", async (req, res) => {
+const getTaskByIdHandler = async (req, res) => {
   try {
     const id = Number(req.params.id);
 
@@ -100,10 +111,13 @@ app.get("/api/tasks/:id", async (req, res) => {
       error: "No se pudo obtener la tarea"
     });
   }
-});
+};
+
+app.get("/tasks/:id", getTaskByIdHandler);
+app.get("/api/tasks/:id", getTaskByIdHandler);
 
 // Crear tarea
-app.post("/api/tasks", async (req, res) => {
+const createTaskHandler = async (req, res) => {
   try {
     console.log("BODY RECIBIDO:", req.body);
 
@@ -141,10 +155,13 @@ app.post("/api/tasks", async (req, res) => {
       detalle: error.message
     });
   }
-});
+};
+
+app.post("/tasks", createTaskHandler);
+app.post("/api/tasks", createTaskHandler);
 
 // Actualizar tarea
-app.patch("/api/tasks/:id", async (req, res) => {
+const updateTaskHandler = async (req, res) => {
   try {
     const id = Number(req.params.id);
 
@@ -197,10 +214,13 @@ app.patch("/api/tasks/:id", async (req, res) => {
       error: "No se pudo actualizar la tarea"
     });
   }
-});
+};
+
+app.patch("/tasks/:id", updateTaskHandler);
+app.patch("/api/tasks/:id", updateTaskHandler);
 
 // Eliminar tarea
-app.delete("/api/tasks/:id", async (req, res) => {
+const deleteTaskHandler = async (req, res) => {
   try {
     const id = Number(req.params.id);
 
@@ -233,7 +253,10 @@ app.delete("/api/tasks/:id", async (req, res) => {
       error: "No se pudo eliminar la tarea"
     });
   }
-});
+};
+
+app.delete("/tasks/:id", deleteTaskHandler);
+app.delete("/api/tasks/:id", deleteTaskHandler);
 
 // 404 controlado
 app.use((req, res) => {
