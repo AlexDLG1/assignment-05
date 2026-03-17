@@ -1,7 +1,7 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
 export async function getTasks() {
-  const response = await fetch(`${API_URL}/api/tasks`);
+  const response = await fetch(`${API_URL}/tasks`);
 
   if (!response.ok) {
     throw new Error("No se pudieron obtener las tareas");
@@ -11,7 +11,7 @@ export async function getTasks() {
 }
 
 export async function createTask(task) {
-  const response = await fetch(`${API_URL}/api/tasks`, {
+  const response = await fetch(`${API_URL}/tasks`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -28,7 +28,7 @@ export async function createTask(task) {
 }
 
 export async function updateTask(id, data) {
-  const response = await fetch(`${API_URL}/api/tasks/${id}`, {
+  const response = await fetch(`${API_URL}/tasks/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json"
@@ -45,7 +45,7 @@ export async function updateTask(id, data) {
 }
 
 export async function deleteTask(id) {
-  const response = await fetch(`${API_URL}/api/tasks/${id}`, {
+  const response = await fetch(`${API_URL}/tasks/${id}`, {
     method: "DELETE"
   });
 
